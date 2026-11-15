@@ -1,0 +1,33 @@
+Test Case ID,Requirement ID,Scenario,Test Objective,Preconditions,Test Steps (browser),Expected Result,Actual Result,Test Status,Evidence
+ST-01,"AUTH-01..05, ORDER-09",E2E-01,Complete purchase as a new customer,Fresh app start,"1. register.html: new email, valid password ×2
+2. Log in
+3. Products → Audio → BassBox Speaker → Add to cart
+4. Cart → Proceed to checkout
+5. Address + phone → Place order
+6. Orders page","Confirmation shows Order #, total $50.00, shipping $0.00; order appears in Orders with status PLACED",,Not executed,
+ST-02,AUTH-08,E2E-02,Invalid login handling,Fresh app start,"1. login.html with customer1@gizmohub.test / wrong password
+2. Then with unknown email","Same red message ""Invalid email or password. [AUTH-08]"" both times; still on login page",,Not executed,
+ST-03,"PROD-06, CART-04",E2E-03,Out-of-stock handling,"Fresh app start, logged in customer","1. Products page → find Pulse Phone Mini
+2. Open its detail page","Badge ""Out of Stock""; buttons disabled on card and detail page",,Not executed,
+ST-04,CART-01,E2E-04,Invalid cart quantity,"Customer, Orbit Watch 3 in cart","1. Cart page → set quantity 11
+2. Set quantity 0",Error with [CART-01] each time; quantity and totals revert to previous values,,Not executed,
+ST-05,CART-02,E2E-04,Quantity above stock from detail page,"Customer, empty cart","1. Orbit Band (stock 1) detail page
+2. Qty 2 → Add to cart",Toast message with [CART-02]; cart badge unchanged,,Not executed,
+ST-06,"ORDER-04, ORDER-10",E2E-05,Failed checkout,Customer with 1 item in cart,"1. Checkout with phone ""079-123""
+2. Check product stock and Orders page",Error [ORDER-04]; summary still shown; stock unchanged; no new order,,Not executed,
+ST-07,ORDER-07,E2E-01,Shipping fee below $50,"Customer, cart = EchoBuds Lite","1. Cart page
+2. Checkout page","Shipping $5.00, total $54.99, hint ""Add $0.01 more for free shipping""",,Not executed,
+ST-08,ORDER-12,E2E-05,Order confirmation and history,Customer placed an order,"1. Orders page
+2. Log out, log in as customer2, Orders page","customer1 sees the order; customer2 sees ""No orders yet""",,Not executed,
+ST-09,AUTH-06,—,Customer opens admin page directly,Logged in customer,1. Type /admin.html in the address bar,"Message ""Administrator access required. [AUTH-06]""; no admin data loaded",,Not executed,
+ST-10,PROD-01..05,—,Admin product management,Logged in admin,"1. Admin → add product with price 10000.01
+2. Fix price to 25.00 → Save
+3. Edit it, set stock 0
+4. Delete it",1: [PROD-02]; 2: appears in table; 3: Out of Stock badge; 4: removed from table and catalog,,Not executed,
+ST-11,ORDER-11,—,Admin order status flow,"Admin, one PLACED order","1. Orders tab → Shipped
+2. Delivered",Status changes; no further buttons after DELIVERED,,Not executed,
+ST-12,"PROD-07, PROD-08",—,Catalog filters in the UI,Fresh app start,"1. Products: min 50, max 50 → Apply
+2. min abc → Apply",1: only BassBox Speaker; 2: error [PROD-08],,Not executed,
+ST-13,NFR-01,—,Performance check,Fresh app start,Run documentation/phase3/perf-check.sh,"p95 ≤ 300 ms, 0 errors",,Not executed,
+ST-14,"AUTH-07, NFR-03",—,Password storage,Fresh app start,"1. Register a user
+2. H2 console: SELECT email, password_hash FROM users",Hash starts with $2a$10$; plain password nowhere,,Not executed,

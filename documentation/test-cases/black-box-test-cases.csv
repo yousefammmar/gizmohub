@@ -1,0 +1,56 @@
+Test Case ID,Requirement ID,Module,Owner,Test Objective,Testing Technique,Preconditions,Test Inputs,Test Steps,Expected Result,Actual Result,Test Status,Evidence
+BB-AUTH-01,AUTH-01,Authentication,Member 1,Valid email class is accepted and normalised,EQP (valid class),App freshly started,"email=""  Sara.K@Example.COM "", password=""Password1"", confirmPassword=""Password1""","1. POST /api/auth/register (or register.html) with inputs
+2. Read response","201; email = ""sara.k@example.com""; role = CUSTOMER",,Not executed,
+BB-AUTH-02,AUTH-01,Authentication,Member 1,Email without top-level domain is rejected,EQP (invalid class),App freshly started,"email=""user@domain"", password=""Password1"", confirmPassword=""Password1""",1. POST /api/auth/register (or register.html),"400, code AUTH-01, no account created",,Not executed,
+BB-AUTH-03,AUTH-02,Authentication,Member 1,Duplicate email (different case) is rejected,EQP (invalid class),Seed account customer1@gizmohub.test exists,"email=""CUSTOMER1@gizmohub.test"", password=""Password1"", confirmPassword=""Password1""",1. POST /api/auth/register (or register.html),"409, code AUTH-02",,Not executed,
+BB-AUTH-04,AUTH-03,Authentication,Member 1,Password just below minimum length,BVA (min-1 = 7),App freshly started,"email=""bva7@test.com"", password=""Abcdef1"" (7 chars), confirmPassword same",1. POST /api/auth/register (or register.html),"400, code AUTH-03",,Not executed,
+BB-AUTH-05,AUTH-03,Authentication,Member 1,Password at minimum length,BVA (min = 8),App freshly started,"email=""bva8@test.com"", password=""Abcdefg1"" (8 chars), confirmPassword same",1. POST /api/auth/register (or register.html),201 created,,Not executed,
+BB-AUTH-06,AUTH-03,Authentication,Member 1,Password at maximum length,BVA (max = 20),App freshly started,"email=""bva20@test.com"", password = 20 chars, confirmPassword same",1. POST /api/auth/register (or register.html),201 created,,Not executed,
+BB-AUTH-07,AUTH-03,Authentication,Member 1,Password just above maximum length,BVA (max+1 = 21),App freshly started,"email=""bva21@test.com"", password = 21 chars, confirmPassword same",1. POST /api/auth/register (or register.html),"400, code AUTH-03",,Not executed,
+BB-AUTH-08,AUTH-04,Authentication,Member 1,Confirmation differing only by case is rejected,"Decision table (valid email, valid length, confirm mismatch)",App freshly started,"email=""dt@test.com"", password=""Password1"", confirmPassword=""password1""",1. POST /api/auth/register (or register.html),"400, code AUTH-04",,Not executed,
+BB-AUTH-09,AUTH-08,Authentication,Member 1,Unknown email and wrong password give identical error,"Cause-effect (C1 email exists, C2 password correct)",Seed data,"(a) customer1@gizmohub.test / ""WrongPass1""  (b) nobody@test.com / ""WrongPass1""","1. POST /api/auth/login with (a)
+2. POST /api/auth/login with (b)
+3. Compare bodies","Both 401, code AUTH-08, message exactly ""Invalid email or password.""",,Not executed,
+BB-AUTH-10,AUTH-06,Authentication,Member 1,Customer cannot call an admin endpoint,"Decision table (logged in = Y, role = CUSTOMER, admin path = Y)",Logged in as customer1@gizmohub.test (fresh app start),DELETE /api/admin/products/1,"1. Log in as customer
+2. Send request","403, code AUTH-06; product 1 still exists",,Not executed,
+BB-PROD-01,PROD-02,Product Management,Member 2,Price at exclusive minimum is rejected,"BVA (min = 0, excluded)",Logged in as admin@gizmohub.test (fresh app start),"name=""Test"", category=""AUDIO"", price=0.00, stock=5",1. POST /api/admin/products,"400, code PROD-02",,Not executed,
+BB-PROD-02,PROD-02,Product Management,Member 2,Smallest valid price,BVA (min+ = 0.01),Logged in as admin@gizmohub.test (fresh app start),"name=""Test"", category=""AUDIO"", price=0.01, stock=5",1. POST /api/admin/products,201; price 0.01,,Not executed,
+BB-PROD-03,PROD-02,Product Management,Member 2,Price at maximum is accepted,BVA (max = 10000.00),Logged in as admin@gizmohub.test (fresh app start),price=10000.00 (other fields valid),1. POST /api/admin/products,201,,Not executed,
+BB-PROD-04,PROD-02,Product Management,Member 2,Price just above maximum,BVA (max+ = 10000.01),Logged in as admin@gizmohub.test (fresh app start),price=10000.01 (other fields valid),1. POST /api/admin/products,"400, code PROD-02",,Not executed,
+BB-PROD-05,PROD-03,Product Management,Member 2,Stock boundaries,"BVA (-1, 0, 1000, 1001)",Logged in as admin@gizmohub.test (fresh app start),"PATCH /api/admin/products/1/stock with stock = -1, 0, 1000, 1001","1. Send each value
+2. Record each response","-1 → 400 PROD-03; 0 → 200 (stockLabel ""Out of Stock""); 1000 → 200; 1001 → 400 PROD-03",,Not executed,
+BB-PROD-06,"PROD-01, PROD-04",Product Management,Member 2,Blank name / unknown category rejected,EQP (invalid classes),Logged in as admin@gizmohub.test (fresh app start),"(a) name=""   "" (b) category=""TOYS"" (other fields valid)",1. POST each,(a) 400 PROD-01 (b) 400 PROD-04,,Not executed,
+BB-PROD-07,PROD-07,Product Management,Member 2,Price range bounds are inclusive,BVA on filter,Seed data (BassBox Speaker = 50.00),GET /api/products?minPrice=50&maxPrice=50,1. Send request,Result contains BassBox Speaker (id 10) and only products priced exactly 50.00,,Not executed,
+BB-PROD-08,PROD-08,Product Management,Member 2,Invalid filter parameters,EQP (invalid classes),Seed data,(a) minPrice=abc (b) minPrice=-1 (c) minPrice=100&maxPrice=10 (d) category=TOYS,1. GET /api/products with each,"Each → 400, code PROD-08",,Not executed,
+BB-PROD-09,PROD-05,Product Management,Member 2,Anonymous user cannot create a product,EQP,Not logged in,valid product body,1. POST /api/admin/products,401,,Not executed,
+BB-PROD-10,PROD-06,Product Management,Member 2,Out-of-stock product shows label and disabled button,EQP (stock = 0 class),"Seed data (Pulse Phone Mini, id 6, stock 0)",Open product-details.html?id=6,"1. Open page
+2. Inspect badge and button","Badge ""Out of Stock""; Add-to-cart button disabled; API stockLabel = ""Out of Stock""",,Not executed,
+BB-CART-01,CART-01,Shopping Cart,Member 3,Quantity below minimum,BVA (min-1 = 0),Logged in as customer1@gizmohub.test (fresh app start),"productId=1, quantity=0",1. POST /api/cart/items,"400, code CART-01; cart unchanged",,Not executed,
+BB-CART-02,CART-01,Shopping Cart,Member 3,Quantity at minimum and maximum,BVA (1 and 10),Logged in as customer1@gizmohub.test (fresh app start),"(a) productId=8, quantity=1 (b) productId=16, quantity=10 (empty cart each time)","1. POST (a)
+2. Empty cart
+3. POST (b)",Both 200; quantities 1 and 10,,Not executed,
+BB-CART-03,CART-01,Shopping Cart,Member 3,Quantity above maximum,BVA (max+1 = 11),Logged in as customer1@gizmohub.test (fresh app start),"productId=16, quantity=11",1. POST /api/cart/items,"400, code CART-01",,Not executed,
+BB-CART-04,CART-02,Shopping Cart,Member 3,Quantity above available stock,BVA on stock (stock 9 → request 9 and 10),Logged in as customer1@gizmohub.test (fresh app start),"PowerCore 20K (id 19, stock 9): (a) quantity=9 (b) quantity=10 on an empty cart","1. POST (a), record
+2. Empty cart
+3. POST (b)",(a) 200 (b) 409 CART-02,,Not executed,
+BB-CART-05,CART-03,Shopping Cart,Member 3,Nonexistent product,EQP (invalid class),Logged in as customer1@gizmohub.test (fresh app start),"productId=9999, quantity=1",1. POST /api/cart/items,"404, code CART-03",,Not executed,
+BB-CART-06,CART-04,Shopping Cart,Member 3,Out-of-stock product,EQP (stock = 0 class),Logged in as customer1@gizmohub.test (fresh app start),"productId=6, quantity=1",1. POST /api/cart/items,"409, code CART-04",,Not executed,
+BB-CART-07,"CART-05, CART-01",Shopping Cart,Member 3,Adding an existing product merges rows and respects the max,"Decision table (in cart = Y, merged ≤ 10 = Y/N)",Logged in as customer1@gizmohub.test (fresh app start),"productId=8: add 6, then add 4, then add 1","1. POST quantity 6
+2. POST quantity 4
+3. POST quantity 1","After 2: one row, quantity 10. Step 3: 400 CART-01, quantity stays 10",,Not executed,
+BB-CART-08,"CART-06, CART-07",Shopping Cart,Member 3,Subtotal and remove,EQP,Logged in as customer1@gizmohub.test (fresh app start),"Add id 9 (49.99) ×2 and id 15 (0.01) ×3, then DELETE id 9","1. Add both
+2. Read subtotal
+3. Remove id 9","Step 2 subtotal 100.01; step 3 subtotal 0.03, 1 row",,Not executed,
+BB-ORD-01,ORDER-02,Checkout & Orders,Member 4,Empty cart cannot be checked out,EQP (invalid class),"Logged in as customer1@gizmohub.test (fresh app start), cart empty","shippingAddress=""12 Rainbow Street, Amman"", phone=""0791234567""",1. POST /api/orders,"400, code ORDER-02",,Not executed,
+BB-ORD-02,ORDER-04,Checkout & Orders,Member 4,Phone digit-count boundaries,"BVA (9, 10, 15, 16 digits)","Logged in as customer1@gizmohub.test (fresh app start), cart has 1 × id 8",phone = 079123456 / 0791234567 / 123456789012345 / 1234567890123456,1. POST /api/orders with each (re-add item after a success),9 → 400 ORDER-04; 10 → 201; 15 → 201; 16 → 400 ORDER-04,,Not executed,
+BB-ORD-03,ORDER-04,Checkout & Orders,Member 4,Phone character classes,EQP (invalid classes),"Logged in as customer1@gizmohub.test (fresh app start), cart has 1 × id 8","""079-123-4567"", ""+"", ""07912+34567"", ""++962791234567""",1. POST /api/orders with each,Each → 400 ORDER-04; stock of id 8 unchanged,,Not executed,
+BB-ORD-04,ORDER-03,Checkout & Orders,Member 4,Address length boundaries,"BVA (9, 10, 200, 201 chars after trim)","Logged in as customer1@gizmohub.test (fresh app start), cart has 1 × id 8",address of 9 / 10 / 200 / 201 characters,1. POST /api/orders with each,9 → 400; 10 → 201; 200 → 201; 201 → 400 (code ORDER-03),,Not executed,
+BB-ORD-05,"ORDER-06, ORDER-07, ORDER-08",Checkout & Orders,Member 4,Shipping fee around the $50 threshold,BVA (49.99 / 50.00),Logged in as customer1@gizmohub.test (fresh app start),(a) cart = 1 × id 9 (49.99) (b) cart = 1 × id 10 (50.00),"1. GET /api/checkout/summary for (a)
+2. Replace cart with (b), summary again","(a) shippingFee 5.00, total 54.99 (b) shippingFee 0.00, total 50.00",,Not executed,
+BB-ORD-06,"ORDER-05, ORDER-10",Checkout & Orders,Member 4,Stock changes between add-to-cart and checkout,Cause-effect (C: quantity > stock),Logged in as customer1@gizmohub.test (fresh app start); cart = 2 × id 7 and 1 × id 8,"Admin sets stock of id 7 to 1, then customer checks out","1. Admin PATCH /api/admin/products/7/stock {stock:1}
+2. Customer POST /api/orders",409 ORDER-05 naming Pulse Phone Lite; stock of id 8 unchanged; no order created; cart unchanged,,Not executed,
+BB-ORD-07,ORDER-09,Checkout & Orders,Member 4,Successful order reduces stock and empties cart,EQP (valid class),Logged in as customer1@gizmohub.test (fresh app start); cart = 2 × id 12,valid address and phone,"1. Note stock of id 12
+2. POST /api/orders
+3. GET /api/products/12, GET /api/cart","201, status PLACED; stock − 2; cart empty",,Not executed,
+BB-ORD-08,ORDER-11,Checkout & Orders,Member 4,Order status transition table,Decision table (from × to),Logged in as admin@gizmohub.test (fresh app start); one PLACED order exists,"PATCH status: SHIPPED, then CANCELLED","1. PATCH {status:SHIPPED}
+2. PATCH {status:CANCELLED}",1 → 200 SHIPPED; 2 → 409 ORDER-11,,Not executed,

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<!--
+  login.html — Log in page of GizmoHub.
+  Header and footer are drawn by js/app.js; page logic is in js/login.js.
+  Business rules are enforced by the Java backend; this page only shows results/errors.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log in · GizmoHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="login">
+  <header class="site-header" id="site-header"></header>
+  <main>
+    <div class="container page">
+      <div class="auth-wrap card">
+        <h1>Log in</h1>
+        <p class="muted">Welcome back to GizmoHub.</p>
+        <div class="alert" id="login-message" hidden role="alert"></div>
+        <form id="login-form" novalidate>
+          <div class="field">
+            <label for="login-email">Email</label>
+            <input id="login-email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <div class="field">
+            <label for="login-password">Password</label>
+            <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+          </div>
+          <!-- Button: submits the form -> handleLogin() -> POST /api/auth/login -> redirect, or error (AUTH-05/AUTH-08). -->
+          <button class="btn btn-primary btn-block" type="submit" id="login-submit">Log in</button>
+        </form>
+        <p class="muted">No account yet? <a href="register.html">Create one</a></p>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer" id="site-footer"></footer>
+  <script src="js/app.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>

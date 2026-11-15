@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!--
+  admin.html — Admin page of GizmoHub.
+  Header and footer are drawn by js/app.js; page logic is in js/admin.js.
+  Business rules are enforced by the Java backend; this page only shows results/errors.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin · GizmoHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="admin">
+  <header class="site-header" id="site-header"></header>
+  <main>
+    <div class="container page">
+      <div class="page-head"><h1>Admin</h1><span class="muted">Products and orders</span></div>
+      <div class="alert" id="admin-message" hidden role="alert"></div>
+      <div class="tabs" role="tablist">
+        <!-- Buttons: switch between the Products and Orders tabs (no API call). -->
+        <button type="button" class="active" data-tab="products" role="tab">Products</button>
+        <button type="button" data-tab="orders" role="tab">Orders</button>
+      </div>
+      <section id="tab-products">
+        <div class="two-col">
+          <div class="card table-wrap" id="admin-products"></div>
+          <form class="card" id="product-form" novalidate>
+            <h2 id="product-form-title">Add product</h2>
+            <input type="hidden" id="product-id">
+            <div class="field"><label for="product-name">Name</label><input id="product-name" required></div>
+            <div class="field"><label for="product-description">Description</label><textarea id="product-description"></textarea></div>
+            <div class="field"><label for="product-category">Category</label><select id="product-category"></select></div>
+            <div class="form-row">
+              <div class="field"><label for="product-price">Price ($)</label><input id="product-price" inputmode="decimal"></div>
+              <div class="field"><label for="product-stock">Stock</label><input id="product-stock" inputmode="numeric"></div>
+            </div>
+            <p class="hint">Price 0.01–10,000 (PROD-02) · Stock 0–1000 (PROD-03)</p>
+            <!-- Button: saveProduct() -> POST or PUT /api/admin/products -> table refresh, or PROD-01..04 error. -->
+            <button class="btn btn-primary btn-block" type="submit" id="product-save">Save product</button>
+            <!-- Button: clears the form back to "Add product" mode. -->
+            <button class="btn btn-ghost btn-block" type="button" id="product-cancel">Clear form</button>
+          </form>
+        </div>
+      </section>
+      <section id="tab-orders" hidden>
+        <div class="card table-wrap" id="admin-orders"></div>
+      </section>
+    </div>
+  </main>
+  <footer class="site-footer" id="site-footer"></footer>
+  <script src="js/app.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

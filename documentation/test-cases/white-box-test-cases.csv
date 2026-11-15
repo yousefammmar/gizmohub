@@ -1,0 +1,2 @@
+Test Case ID,Method under test,Coverage target (statement / branch / condition / MCC / path / LCSAJ / du-pair),Path or condition combination covered,Test Inputs,Expected Result,JUnit test method,Actual Result,Test Status
+WB-01,CheckoutValidator.validatePhone,(fill in),(fill in),(fill in),(fill in),(fill in),,Not executed

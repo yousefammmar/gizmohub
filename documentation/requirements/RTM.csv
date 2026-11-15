@@ -1,0 +1,40 @@
+Requirement ID,Module,Description,Source component,Black-box test cases,White-box test cases,Integration test cases,System test cases,Automated unit tests (baseline),Coverage status
+AUTH-01,Authentication,Valid email format,AuthValidator.normalizeEmail,"BB-AUTH-01, BB-AUTH-02",,IT-01,ST-01,AuthValidatorTest,Planned — update after execution
+AUTH-02,Authentication,Unique email,AuthService.register,BB-AUTH-03,,IT-02,,,Planned — update after execution
+AUTH-03,Authentication,Password 8-20 chars,AuthValidator.validatePassword,BB-AUTH-04..07,,IT-01,ST-01,AuthValidatorTest,Planned — update after execution
+AUTH-04,Authentication,Confirmation matches,AuthValidator.validatePasswordConfirmation,BB-AUTH-08,,,ST-01,AuthValidatorTest,Planned — update after execution
+AUTH-05,Authentication,Login requires valid credentials,AuthService.login,BB-AUTH-09,,"IT-01, IT-04",ST-01,,Planned — update after execution
+AUTH-06,Authentication,Customers blocked from admin,AuthInterceptor.preHandle,BB-AUTH-10,,IT-06,ST-09,,Planned — update after execution
+AUTH-07,Authentication,Password hashing,"AppConfig.passwordEncoder, AuthService.register",,,IT-01,ST-14,,Planned — update after execution
+AUTH-08,Authentication,Generic login error,AuthService.login,BB-AUTH-09,,IT-03,ST-02,,Planned — update after execution
+PROD-01,Product Management,Name not empty,ProductValidator.validateName,BB-PROD-06,,IT-07,ST-10,ProductValidatorTest,Planned — update after execution
+PROD-02,Product Management,0 < price <= 10000,ProductValidator.validatePrice,BB-PROD-01..04,,IT-07,ST-10,ProductValidatorTest,Planned — update after execution
+PROD-03,Product Management,0 <= stock <= 1000,ProductValidator.validateStock,BB-PROD-05,,IT-12,ST-10,ProductValidatorTest,Planned — update after execution
+PROD-04,Product Management,Category required,ProductValidator.parseCategory,BB-PROD-06,,IT-07,,,Planned — update after execution
+PROD-05,Product Management,Only admins modify products,AuthInterceptor.preHandle,BB-PROD-09,,"IT-06, IT-07",ST-10,,Planned — update after execution
+PROD-06,Product Management,Zero stock = Out of Stock,ProductService.stockLabel,BB-PROD-10,,IT-08,ST-03,ProductServiceTest,Planned — update after execution
+PROD-07,Product Management,Inclusive price filter,ProductService.matchesFilters,BB-PROD-07,,,ST-12,ProductServiceTest,Planned — update after execution
+PROD-08,Product Management,Invalid filters handled,ProductService.search / parseFilterPrice / parseFilterCategory / normalizeQuery,BB-PROD-08,,,ST-12,ProductServiceTest,Planned — update after execution
+CART-01,Shopping Cart,Quantity 1-10,"CartService.validateQuantity, addItem","BB-CART-01..03, BB-CART-07",,,ST-04,CartServiceTest,Planned — update after execution
+CART-02,Shopping Cart,Quantity <= stock,"CartService.addItem, updateQuantity",BB-CART-04,,IT-12,ST-05,CartServiceTest,Planned — update after execution
+CART-03,Shopping Cart,Nonexistent product,CartService.findProduct,BB-CART-05,,IT-14,,CartServiceTest,Planned — update after execution
+CART-04,Shopping Cart,Out-of-stock product,CartService.addItem,BB-CART-06,,IT-08,ST-03,CartServiceTest,Planned — update after execution
+CART-05,Shopping Cart,Merge existing row,CartService.addItem,BB-CART-07,,,,CartServiceTest,Planned — update after execution
+CART-06,Shopping Cart,Subtotal formula,"OrderCalculator.lineTotal, subtotal",BB-CART-08,,IT-09,,OrderCalculatorTest,Planned — update after execution
+CART-07,Shopping Cart,Remove updates total,CartService.removeItem,BB-CART-08,,,ST-04,,Planned — update after execution
+CART-08,Shopping Cart,Cart owned by customer,"CartController.currentUserId, CartItemRepository",,,"IT-04, IT-05",,,Planned — update after execution
+ORDER-01,Checkout & Orders,Checkout needs login,"AuthInterceptor, CheckoutService.placeOrder",,,IT-05,,,Planned — update after execution
+ORDER-02,Checkout & Orders,Cart not empty,CheckoutService.placeOrder,BB-ORD-01,,,,CheckoutServiceTest,Planned — update after execution
+ORDER-03,Checkout & Orders,Address required,CheckoutValidator.validateAddress,BB-ORD-04,,,,CheckoutValidatorTest,Planned — update after execution
+ORDER-04,Checkout & Orders,Phone rule,CheckoutValidator.validatePhone,"BB-ORD-02, BB-ORD-03",,IT-10,ST-06,CheckoutValidatorTest,Planned — update after execution
+ORDER-05,Checkout & Orders,Stock available,CheckoutService.placeOrder,BB-ORD-06,,,,CheckoutServiceTest,Planned — update after execution
+ORDER-06,Checkout & Orders,Free shipping >= 50,OrderCalculator.shippingFee,BB-ORD-05,,IT-09,ST-01,OrderCalculatorTest,Planned — update after execution
+ORDER-07,Checkout & Orders,5.00 shipping < 50,OrderCalculator.shippingFee,BB-ORD-05,,,ST-07,OrderCalculatorTest,Planned — update after execution
+ORDER-08,Checkout & Orders,Total correct,OrderCalculator.calculate,BB-ORD-05,,IT-09,ST-01,OrderCalculatorTest,Planned — update after execution
+ORDER-09,Checkout & Orders,Success reduces stock,CheckoutService.placeOrder,BB-ORD-07,,IT-09,ST-01,CheckoutServiceTest,Planned — update after execution
+ORDER-10,Checkout & Orders,Failure changes nothing,CheckoutService.placeOrder (@Transactional),BB-ORD-06,,IT-10,ST-06,CheckoutServiceTest,Planned — update after execution
+ORDER-11,Checkout & Orders,Status transitions,"OrderService.changeStatus, isAllowedTransition",BB-ORD-08,,IT-13,ST-11,OrderServiceTest,Planned — update after execution
+ORDER-12,Checkout & Orders,Own orders only,"OrderService.getOwnOrder, history",,,IT-11,ST-08,,Planned — update after execution
+NFR-01,Non-functional,Search p95 <= 300 ms,whole stack,,,,ST-13,,Planned — update after execution
+NFR-02,Non-functional,Authorization matrix 100%,AuthInterceptor,,,"IT-05, IT-06",ST-09,,Planned — update after execution
+NFR-03,Non-functional,No credential exposure,"AuthService, DTOs",,,IT-01,ST-14,,Planned — update after execution

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<!--
+  products.html — Products page of GizmoHub.
+  Header and footer are drawn by js/app.js; page logic is in js/products.js.
+  Business rules are enforced by the Java backend; this page only shows results/errors.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Products · GizmoHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="products">
+  <header class="site-header" id="site-header"></header>
+  <main>
+    <div class="container page catalog">
+      <aside class="card filters" aria-label="Filters">
+        <form id="filter-form" novalidate>
+          <div class="filter-group">
+            <h3>Search</h3>
+            <input id="filter-q" name="q" type="search" placeholder="Name or description">
+          </div>
+          <div class="filter-group">
+            <h3>Category</h3>
+            <ul class="category-list" id="category-list"></ul>
+          </div>
+          <div class="filter-group">
+            <h3>Price range ($)</h3>
+            <div class="form-row">
+              <div><label for="filter-min">Min</label><input id="filter-min" name="minPrice" inputmode="decimal" placeholder="0"></div>
+              <div><label for="filter-max">Max</label><input id="filter-max" name="maxPrice" inputmode="decimal" placeholder="10000"></div>
+            </div>
+            <p class="hint">Both limits are inclusive (PROD-07).</p>
+          </div>
+          <!-- Button: applyFilters() -> GET /api/products?... -> redraws the grid, or shows a PROD-08 error. -->
+          <button class="btn btn-primary btn-block" type="submit" id="filter-apply">Apply filters</button>
+          <!-- Button: clears every filter and reloads all products. -->
+          <button class="btn btn-ghost btn-block" type="button" id="filter-reset">Reset</button>
+        </form>
+      </aside>
+      <section>
+        <div class="page-head">
+          <h1 id="catalog-title">All products</h1>
+          <span class="muted" id="result-count"></span>
+        </div>
+        <div class="alert" id="catalog-message" hidden role="alert"></div>
+        <div class="product-grid" id="product-grid" aria-live="polite"></div>
+      </section>
+    </div>
+  </main>
+  <footer class="site-footer" id="site-footer"></footer>
+  <script src="js/app.js"></script>
+  <script src="js/products.js"></script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  GizmoHub backend build file (Maven).
+  Beginner notes:
+    ./mvnw spring-boot:run     -> starts the app on http://localhost:8080 (also serves ../frontend)
+    ./mvnw test                -> runs all JUnit 5 tests + writes the JaCoCo report to target/site/jacoco/index.html
+    ./mvnw test-compile org.pitest:pitest-maven:mutationCoverage
+                               -> runs PIT mutation testing, report in target/pit-reports/index.html
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.16</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.gizmohub</groupId>
+    <artifactId>gizmohub</artifactId>
+    <version>1.0.0</version>
+    <name>GizmoHub</name>
+    <description>QA-ready lightweight e-commerce application</description>
+
+    <properties>
+        <java.version>17</java.version>
+        <jacoco.version>0.8.16</jacoco.version>
+        <pitest.version>1.30.2</pitest.version>
+        <pitest.junit5.version>1.2.3</pitest.junit5.version>
+    </properties>
+
+    <dependencies>
+        <!-- REST controllers + embedded Tomcat + static file serving -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- JPA repositories (database access) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <!-- BCrypt password hashing ONLY (no Spring Security filter chain, to keep auth readable) -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+        </dependency>
+        <!-- In-memory database: fresh and identical on every start -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- JUnit 5 + Mockito + Spring Boot Test + MockMvc + AssertJ -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- JaCoCo: statement (line/instruction) and branch coverage -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals><goal>prepare-agent</goal></goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals><goal>report</goal></goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>
+                        <!-- Startup class and seed data are not business logic -->
+                        <exclude>com/gizmohub/GizmoHubApplication.class</exclude>
+                        <exclude>com/gizmohub/configuration/DataSeeder.class</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <!-- PIT mutation testing (runs the fast unit tests against mutated business logic) -->
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>${pitest.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>${pitest.junit5.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <targetClasses>
+                        <param>com.gizmohub.services.*</param>
+                        <param>com.gizmohub.validation.*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>com.gizmohub.unit.*</param>
+                    </targetTests>
+                    <mutators>
+                        <!-- DEFAULTS includes conditional boundary (off-by-one), negate conditionals,
+                             math (arithmetic replacement), increments, return values.
+                             REMOVE_CONDITIONALS + inline constants cover conditional modification
+                             and constant replacement. -->
+                        <mutator>DEFAULTS</mutator>
+                        <mutator>REMOVE_CONDITIONALS</mutator>
+                        <mutator>INLINE_CONSTS</mutator>
+                    </mutators>
+                    <outputFormats>
+                        <format>HTML</format>
+                        <format>XML</format>
+                    </outputFormats>
+                    <timestampedReports>false</timestampedReports>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
