@@ -30,8 +30,8 @@ H2 in-memory database (re-created and re-seeded on every start)
 
 | Module | Team member | Main classes |
 |---|---|---|
-| 1 Authentication | Member 1 | `AuthController`, `AuthService`, `AuthValidator`, `AuthInterceptor` |
-| 2 Product Management | Member 2 | `ProductController`, `AdminController` (products), `ProductService`, `ProductValidator` |
+| 1 Authentication | Yousef Odeh | `AuthController`, `AuthService`, `AuthValidator`, `AuthInterceptor` |
+| 2 Product Management | Heba Alomari | `ProductController`, `AdminController` (products), `ProductService`, `ProductValidator` |
 | 3 Shopping Cart | Member 3 | `CartController`, `CartService`, `OrderCalculator` (subtotal) |
 | 4 Checkout & Orders | Member 4 | `OrderController`, `AdminController` (orders), `CheckoutService`, `OrderService`, `OrderCalculator`, `CheckoutValidator` |
 
